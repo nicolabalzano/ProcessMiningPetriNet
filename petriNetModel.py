@@ -8,8 +8,10 @@ import pm4py
 import pandas as pd
 
 #Path to the dataset file
-event_log_path = "data/Insurance_claims_event_log.csv"  # Replace with the actual file path
-#event_log_path = "data/edited_hh102_weekends.xes"  # Replace with the actual file path
+# bpi2017
+# BPI_Challenge_2013_incidents
+event_log_path = "data/BPI_Challenge_2013_incidents.xes"  # Replace with the actual file path
+
 
 #Step 1: Import the event log
 def import_event_log(file_path):

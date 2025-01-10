@@ -1,8 +1,7 @@
-import pm4py
-from pm4py.objects.log.importer.csv import factory as csv_importer
-from pm4py.objects.conversion.log import factory as log_converter
-from pm4py.algo.discovery.alpha import factory as alpha_miner
-from pm4py.visualization.petrinet import factory as pn_visualizer
+import pm4py.objects.ocel.importer.csv.importer as csv_importer
+import pm4py.objects.conversion.log.converter as log_converter
+import pm4py.algo.discovery.alpha.algorithm as alpha_miner
+import pm4py.visualization.petri_net.visualizer  as pn_visualizer
 
 #Path to the dataset file
 event_log_path = "path_to_your_file.csv"  # Replace with the actual file path
@@ -32,7 +31,7 @@ def visualize_petri_net(net, initial_marking, final_marking):
     print("Petri net visualization complete.")
 
 #Main execution block
-if name == "main":
+if __name__ == "main":
     # Import the event log
     event_log = import_event_log(event_log_path)
 

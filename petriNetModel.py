@@ -35,8 +35,10 @@ def visualize_petri_net(net, initial_marking, final_marking):
     pn_visualizer.view(gviz)
     print("Petri net visualization complete.")
 
-def checking_petri_net_properties(net, initial_marking, final_marking):
+# Step 4: Split the net in train and test and check the properties of the Petri net
+def checking_petri_net_properties(net, initial_marking, final_marking, event_log_test):
     print("\n--->Step 4: Checking the properties of the Petri net")
+    
     # Check the properties of the Petri net
     print("Number of places:", len(net.places))
     print("Number of transitions:", len(net.transitions))
@@ -44,29 +46,31 @@ def checking_petri_net_properties(net, initial_marking, final_marking):
     print("Initial marking:", initial_marking)
     print("Final marking:", final_marking)
     print("The petri net is a workflow net? ", wf_net.apply(net))
-    print("Soundness: ",pm4py.analysis.check_soundness(net, initial_marking, final_marking))
+    print("Soundness: ",pm4py.analysis.check_soundness(net, initial_marking, final_marking)[0])
     #petri_net_invisible_transition = pm4py.analysis.reduce_petri_net_invisibles(net)
     #visualize_petri_net(petri_net_invisible_transition, initial_marking, final_marking)
     # print("Maximal decomposition: ",pm4py.analysis.maximal_decomposition(net, initial_marking, final_marking))
     print("Simplicity: ",pm4py.algo.evaluation.simplicity.algorithm.apply(net))
-    print("Precision: ",pm4py.algo.evaluation.precision.algorithm.check_easy_soundness_net_in_fin_marking(net, initial_marking, final_marking))
-    print("Replay fitness: ",pm4py.algo.evaluation.replay_fitness.algorithm.apply(event_log, net, initial_marking, final_marking))
+    print("Replay fitness: ",pm4py.algo.evaluation.replay_fitness.algorithm.apply(event_log_test, net, initial_marking, final_marking))
     print("Generalization: ",pm4py.algo.evaluation.generalization.algorithm.apply(event_log, net, initial_marking, final_marking))
-    
+    #df_diagnostics = pm4py.conformance_diagnostics_token_based_replay(event_log, net, initial_marking, final_marking, return_diagnostics_dataframe=True)
+    #print("Conformance dignostics token based reply: ",df_diagnostics)
+    #df_diagnostics.to_csv("data/conformance_diagnostics.csv")
 
 #Main execution block
 if __name__ == "__main__":
     print("Process Mining with PM4Py: Discovering a Petri net from an event log")
-    
+
     # Import the event log
     event_log = import_event_log(event_log_path)
-    #print(event_log.__dict__)
+    (event_log_train, event_log_test) = pm4py.ml.split_train_test(event_log)
+
     
     # Discover the Petri net
-    net, initial_marking, final_marking = discover_petri_net(event_log)
+    net, initial_marking, final_marking = discover_petri_net(event_log_train)
     
     # Check the properties of the Petri net
-    checking_petri_net_properties(net, initial_marking, final_marking)
+    checking_petri_net_properties(net, initial_marking, final_marking, event_log_test)
     
     # Visualize the Petri net
     visualize_petri_net(net, initial_marking, final_marking)

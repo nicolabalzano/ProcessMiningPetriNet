@@ -8,23 +8,12 @@ import pm4py
 import pandas as pd
 
 #Path to the dataset file
-# bpi2017
-# BPI_Challenge_2013_incidents
-event_log_path = "data/BPI_Challenge_2013_incidents.xes"  # Replace with the actual file path
+event_log_path = "data/BPI_Challenge_2013_incidents.xes" 
 
 
 #Step 1: Import the event log
 def import_event_log(file_path):
     print("\n--->Step 1: Importing the event log")
-    # Import the CSV file as an event log
-    
-    """
-    pd_data = pd.read_csv(file_path)
-    pd_data.columns = ['case:concept:name','concept:name','time:timestamp','claimant_name','agent_name','adjuster_name','claim_amount','claimant_age','type_of_policy','car_make','car_model','car_year','type_of_accident','user_type']
-    
-    pd_data['time:timestamp'] = pd.to_datetime(pd_data['time:timestamp'])
-    event_log = log_converter.apply(pd_data, variant=log_converter.Variants.TO_EVENT_LOG)
-    """
     
     event_log = xes_importer.apply(file_path)
 
@@ -55,7 +44,15 @@ def checking_petri_net_properties(net, initial_marking, final_marking):
     print("Initial marking:", initial_marking)
     print("Final marking:", final_marking)
     print("The petri net is a workflow net? ", wf_net.apply(net))
-    #print("The petri net is a sound? ", petri_utils.check_soundness(net, initial_marking, final_marking))
+    print("Soundness: ",pm4py.analysis.check_soundness(net, initial_marking, final_marking))
+    #petri_net_invisible_transition = pm4py.analysis.reduce_petri_net_invisibles(net)
+    #visualize_petri_net(petri_net_invisible_transition, initial_marking, final_marking)
+    # print("Maximal decomposition: ",pm4py.analysis.maximal_decomposition(net, initial_marking, final_marking))
+    print("Simplicity: ",pm4py.algo.evaluation.simplicity.algorithm.apply(net))
+    print("Precision: ",pm4py.algo.evaluation.precision.algorithm.check_easy_soundness_net_in_fin_marking(net, initial_marking, final_marking))
+    print("Replay fitness: ",pm4py.algo.evaluation.replay_fitness.algorithm.apply(event_log, net, initial_marking, final_marking))
+    print("Generalization: ",pm4py.algo.evaluation.generalization.algorithm.apply(event_log, net, initial_marking, final_marking))
+    
 
 #Main execution block
 if __name__ == "__main__":
@@ -73,3 +70,5 @@ if __name__ == "__main__":
     
     # Visualize the Petri net
     visualize_petri_net(net, initial_marking, final_marking)
+    
+   
